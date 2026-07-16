@@ -86,6 +86,12 @@ refatorar componentes. O logo atual e um placeholder textual ("Magister").
   escapa). Nao ha `dangerouslySetInnerHTML` com dado nao confiavel.
 - **Confianca no servidor:** o widget envia so `embed_token` + mensagem; identidade, instrucoes,
   fontes e limites sao resolvidos no backend.
+- **CSP `frame-ancestors` / clickjacking:** aplicado como header HTTP na hospedagem estatica do
+  frontend (nao pode vir de `<meta>`; o navegador ignora `frame-ancestors` em meta). Recomendado:
+  `frame-ancestors 'none'` nas rotas de `/admin` (o painel nunca deve ser embutido) e valor
+  permissivo/coerente para `/embed` (o widget e embutivel por design). A restricao real por tutor
+  fica no backend, que valida o header `Origin` de `POST /api/chat` contra `allowed_origins`. Em
+  Vercel, configurar via `vercel.json` (`headers` por path). Nao ha esse header no build atual.
 
 ## Acessibilidade
 
