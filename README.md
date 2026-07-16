@@ -94,12 +94,9 @@ refatorar componentes. O logo atual e um placeholder textual ("Magister").
     `Content-Security-Policy: frame-ancestors 'none'` contra clickjacking do painel.
   - Gerais em ambas: `X-Content-Type-Options: nosniff`,
     `Referrer-Policy: strict-origin-when-cross-origin`.
-- **CSP `frame-ancestors` / clickjacking:** aplicado como header HTTP na hospedagem estatica do
-  frontend (nao pode vir de `<meta>`; o navegador ignora `frame-ancestors` em meta). Recomendado:
-  `frame-ancestors 'none'` nas rotas de `/admin` (o painel nunca deve ser embutido) e valor
-  permissivo/coerente para `/embed` (o widget e embutivel por design). A restricao real por tutor
-  fica no backend, que valida o header `Origin` de `POST /api/chat` contra `allowed_origins`. Em
-  Vercel, configurar via `vercel.json` (`headers` por path). Nao ha esse header no build atual.
+  Nota: `frame-ancestors` so vale como header HTTP na hospedagem (o navegador ignora em `<meta>`),
+  por isso vive no `vercel.json`. A restricao real por tutor nao e do frontend: o backend valida o
+  header `Origin` de `POST /api/chat` contra `allowed_origins`.
 
 ## Acessibilidade
 
