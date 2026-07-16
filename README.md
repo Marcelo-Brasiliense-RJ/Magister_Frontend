@@ -86,6 +86,14 @@ refatorar componentes. O logo atual e um placeholder textual ("Magister").
   escapa). Nao ha `dangerouslySetInnerHTML` com dado nao confiavel.
 - **Confianca no servidor:** o widget envia so `embed_token` + mensagem; identidade, instrucoes,
   fontes e limites sao resolvidos no backend.
+- **Headers de seguranca por rota** (`vercel.json`, aplicados no deploy):
+  - `/embed` e subpaths: `Content-Security-Policy: frame-ancestors *` (o widget e embutivel em
+    qualquer site por design; a restricao real por tutor e o Origin check do backend em
+    `/api/chat`). Sem `X-Frame-Options` aqui, que quebraria o embed.
+  - Admin + raiz (catch-all que exclui `/embed`): `X-Frame-Options: DENY` e
+    `Content-Security-Policy: frame-ancestors 'none'` contra clickjacking do painel.
+  - Gerais em ambas: `X-Content-Type-Options: nosniff`,
+    `Referrer-Policy: strict-origin-when-cross-origin`.
 - **CSP `frame-ancestors` / clickjacking:** aplicado como header HTTP na hospedagem estatica do
   frontend (nao pode vir de `<meta>`; o navegador ignora `frame-ancestors` em meta). Recomendado:
   `frame-ancestors 'none'` nas rotas de `/admin` (o painel nunca deve ser embutido) e valor
