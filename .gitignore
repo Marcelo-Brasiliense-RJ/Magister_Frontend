@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+
+# Ambiente (segredos ficam fora do versionamento; so .env.example e versionado)
+.env
+.env.*
+!.env.example
+
+# Editor / SO
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+*.log
