@@ -1,0 +1,5 @@
+<!-- Logo placeholder do Magister (wordmark + dot teal). Substituir pela saida do Claude Design. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" role="img" aria-label="Magister">
+  <text x="0" y="29" font-family="Sora, Poppins, sans-serif" font-size="26" font-weight="700" fill="currentColor">Magister</text>
+  <circle cx="192" cy="26" r="5" fill="#16C0BE" />
+</svg>

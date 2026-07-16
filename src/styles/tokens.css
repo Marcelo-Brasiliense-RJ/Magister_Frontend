@@ -1,0 +1,102 @@
+/*
+ * Design tokens do Magister (placeholder ate a saida do Claude Design).
+ * Nomes SEMANTICOS estaveis: trocar valores por tema sem refatorar componentes.
+ * Marca DOT: base carvao, marfim/branco, accent teal. Claro principal, escuro secundario.
+ * A saida oficial do Claude Design substitui este arquivo mantendo os mesmos nomes.
+ */
+
+:root {
+  /* Accent (teal DOT) */
+  --accent: #16c0be;
+  --accent-hover: #12a5a3;
+  --accent-contrast: #ffffff;
+  --accent-subtle: #e3f7f7;
+
+  /* Superficies e fundo (tema claro) */
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --surface-alt: #f0efeb;
+  --border: #e2e0da;
+
+  /* Texto */
+  --text-strong: #2e2e2e;
+  --text: #3f3f3f;
+  --text-muted: #757575;
+  --text-on-accent: #ffffff;
+
+  /* Estados */
+  --success: #1f9d55;
+  --success-subtle: #e4f5ec;
+  --warning: #c77700;
+  --warning-subtle: #fbf0dd;
+  --danger: #d13b3b;
+  --danger-subtle: #fae4e4;
+  --info: #2b6cb0;
+  --focus-ring: #16c0be;
+
+  /* Tipografia */
+  --font-heading: 'Sora', 'Poppins', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --fs-display: 2rem;
+  --fs-h1: 1.5rem;
+  --fs-h2: 1.25rem;
+  --fs-h3: 1.05rem;
+  --fs-body: 0.95rem;
+  --fs-sm: 0.85rem;
+  --fs-caption: 0.75rem;
+
+  /* Espacamento (base 4px) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* Raios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(46, 46, 46, 0.06);
+  --shadow-md: 0 4px 12px rgba(46, 46, 46, 0.08);
+  --shadow-lg: 0 12px 32px rgba(46, 46, 46, 0.12);
+
+  /* Motion */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+}
+
+[data-theme='dark'] {
+  --accent: #16c0be;
+  --accent-hover: #37d1cf;
+  --accent-contrast: #0f1419;
+  --accent-subtle: #123634;
+
+  --bg: #0f1419;
+  --surface: #171d24;
+  --surface-alt: #1f272f;
+  --border: #2b333c;
+
+  --text-strong: #f2f3f4;
+  --text: #d8dade;
+  --text-muted: #9aa1a9;
+  --text-on-accent: #0f1419;
+
+  --success: #3fb977;
+  --success-subtle: #14301f;
+  --warning: #e0a136;
+  --warning-subtle: #3a2c12;
+  --danger: #e46464;
+  --danger-subtle: #3a1c1c;
+  --info: #5b9bd5;
+  --focus-ring: #37d1cf;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
