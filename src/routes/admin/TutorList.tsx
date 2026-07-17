@@ -32,6 +32,7 @@ export function TutorList() {
   }, [filterOpen]);
 
   const list = tutors.filter((t) => !t.fallback);
+  const reitor = tutors.find((t) => t.fallback);
   const total = list.length;
   const active = list.filter((t) => t.active).length;
 
@@ -44,11 +45,15 @@ export function TutorList() {
     );
   }, [list, query, statusFilter]);
 
-  const onConfirmToggle = () => {
+  const onConfirmToggle = async () => {
     if (!confirming) return;
     const newActive = !confirming.active;
-    toggleTutor(confirming.id);
-    toast(newActive ? 'ok' : 'info', newActive ? 'Tutor ativado' : 'Tutor desativado', `“${confirming.name}”, status atualizado.`);
+    try {
+      await toggleTutor(confirming.id);
+      toast(newActive ? 'ok' : 'info', newActive ? 'Tutor ativado' : 'Tutor desativado', `“${confirming.name}”, status atualizado.`);
+    } catch (e) {
+      toast('err', 'Falha ao atualizar', e instanceof Error ? e.message : 'Tente novamente.');
+    }
     setConfirming(null);
   };
 
@@ -72,42 +77,44 @@ export function TutorList() {
         </div>
       </div>
 
-      <div className="reitor" onClick={() => navigate('/admin/tutors/99')}>
-        <div className="glow" />
-        <div className="ric">
-          <Icon name="crown" />
-        </div>
-        <div className="rbody">
-          <div className="rtitle">
-            <b>Reitor</b>
-            <span className="rbadge">Fallback · última instância</span>
+      {reitor && (
+        <div className="reitor" onClick={() => navigate(`/admin/tutors/${reitor.id}`)}>
+          <div className="glow" />
+          <div className="ric">
+            <Icon name="crown" />
           </div>
-          <div className="rdesc">
-            Responde em linguagem natural o que os tutores não sabem, sempre ancorado no que os outros tutores já conhecem, para não inventar respostas. Quando a IA fica em dúvida ou a pergunta foge do escopo, a conversa é escalada para o Reitor.
+          <div className="rbody">
+            <div className="rtitle">
+              <b>Reitor</b>
+              <span className="rbadge">Fallback · última instância</span>
+            </div>
+            <div className="rdesc">
+              Responde em linguagem natural o que os tutores não sabem, sempre ancorado no que os outros tutores já conhecem, para não inventar respostas. Quando a IA fica em dúvida ou a pergunta foge do escopo, a conversa é escalada para o Reitor.
+            </div>
+          </div>
+          <div className="rright">
+            <button
+              className="rstat-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/admin/tutors/${reitor.id}?tab=hist`);
+              }}
+            >
+              <b>{reitor.conv}</b>
+              <small>escaladas · ver histórico</small>
+            </button>
+            <button
+              className="rbtn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/admin/tutors/${reitor.id}`);
+              }}
+            >
+              <Icon name="settings-2" /> Configurar
+            </button>
           </div>
         </div>
-        <div className="rright">
-          <button
-            className="rstat-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate('/admin/tutors/99?tab=hist');
-            }}
-          >
-            <b>34</b>
-            <small>escaladas · ver histórico</small>
-          </button>
-          <button
-            className="rbtn"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate('/admin/tutors/99');
-            }}
-          >
-            <Icon name="settings-2" /> Configurar
-          </button>
-        </div>
-      </div>
+      )}
 
       <div className="toolbar">
         <div className="searchbox">

@@ -1,5 +1,5 @@
 // Cliente REST do painel admin. Segredos nunca ficam aqui: so o JWT em memoria/localStorage.
-import type { EmbedInfo, Tutor, TutorInput } from './types';
+import type { ChatRole, EmbedInfo, Tutor, TutorInput } from './types';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 const TOKEN_KEY = 'magister_token';
@@ -63,7 +63,7 @@ export function listTutors(): Promise<Tutor[]> {
   return request<Tutor[]>('/api/tutors');
 }
 
-export function getTutor(id: string): Promise<Tutor> {
+export function getTutor(id: number): Promise<Tutor> {
   return request<Tutor>(`/api/tutors/${id}`);
 }
 
@@ -71,18 +71,18 @@ export function createTutor(input: TutorInput): Promise<Tutor> {
   return request<Tutor>('/api/tutors', { method: 'POST', body: JSON.stringify(input) });
 }
 
-export function updateTutor(id: string, input: TutorInput): Promise<Tutor> {
+export function updateTutor(id: number, input: TutorInput): Promise<Tutor> {
   return request<Tutor>(`/api/tutors/${id}`, { method: 'PUT', body: JSON.stringify(input) });
 }
 
-export function setTutorStatus(id: string, status: Tutor['status']): Promise<Tutor> {
+export function setTutorStatus(id: number, status: Tutor['status']): Promise<Tutor> {
   return request<Tutor>(`/api/tutors/${id}/status`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
   });
 }
 
-export function getEmbedInfo(id: string): Promise<EmbedInfo> {
+export function getEmbedInfo(id: number): Promise<EmbedInfo> {
   return request<EmbedInfo>(`/api/tutors/${id}/embed`);
 }
 
@@ -96,6 +96,21 @@ export async function getWidgetConfig(embedToken: string): Promise<WidgetConfig>
   const res = await fetch(`${API_URL}/api/embed/${encodeURIComponent(embedToken)}`);
   if (!res.ok) throw new ApiError(res.status, 'Tutor indisponivel.');
   return res.json() as Promise<WidgetConfig>;
+}
+
+// Resume da conversa-modelo (publica): o servidor MINTA um session_id por visitante
+// (clona o template a cada abertura). O cliente nunca constroi o id.
+export interface ResumeSession {
+  session_id: string | null;
+  messages: { role: ChatRole; content: string }[];
+}
+
+export async function startResumeSession(embedToken: string): Promise<ResumeSession> {
+  const res = await fetch(`${API_URL}/api/embed/${encodeURIComponent(embedToken)}/session`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new ApiError(res.status, 'Sessao indisponivel.');
+  return res.json() as Promise<ResumeSession>;
 }
 
 export { API_URL };

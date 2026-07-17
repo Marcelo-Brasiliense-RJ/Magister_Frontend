@@ -8,12 +8,13 @@ interface ChatWindowProps {
   embedToken: string;
   title: string;
   greeting: string;
+  resume?: boolean; // resume a conversa-modelo semeada (widget do iframe)
 }
 
 const DEFAULT_GREETING = 'Como posso ajudar voce hoje?';
 
-export function ChatWindow({ embedToken, title, greeting }: ChatWindowProps) {
-  const { messages, status, errorMessage, send, retry } = useChat(embedToken);
+export function ChatWindow({ embedToken, title, greeting, resume }: ChatWindowProps) {
+  const { messages, status, errorMessage, send, retry } = useChat(embedToken, { resume });
   const streaming = status === 'streaming';
 
   return (

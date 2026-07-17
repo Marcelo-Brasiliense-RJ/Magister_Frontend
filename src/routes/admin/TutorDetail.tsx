@@ -33,6 +33,7 @@ export function TutorDetail() {
   const [desc, setDesc] = useState(tutor ? tutor.desc : '');
   const [instr, setInstr] = useState(tutor ? tutor.instr || defaultInstr(tutor.name) : '');
   const [active, setActive] = useState(tutor ? tutor.active : true);
+  const [fallbackEnabled, setFallbackEnabled] = useState(tutor ? tutor.fallbackEnabled : true);
   const [model, setModel] = useState<ModelId>(tutor ? tutor.model : 'auto');
   const [sourceUrls, setSourceUrls] = useState<string[]>(tutor ? [...tutor.sourceUrls] : []);
   const [origins, setOrigins] = useState<string[]>(tutor ? [...tutor.origins] : []);
@@ -55,7 +56,7 @@ export function TutorDetail() {
   const detailTitle = tutor ? tutor.name : 'Novo tutor';
   const detailSub = tutor ? tutor.desc : 'Defina como o tutor conversa e de onde ele tira respostas.';
 
-  const doSave = () => {
+  const doSave = async () => {
     if (!title.trim()) {
       setTitleError(true);
       setTab('config');
@@ -63,24 +64,29 @@ export function TutorDetail() {
       return;
     }
     setTitleError(false);
-    saveTutor({
-      id: editingId ?? undefined,
-      name: title.trim(),
-      desc: desc.trim(),
-      active,
-      sourceUrls: sourceUrls.map((u) => u.trim()).filter(Boolean),
-      origins: origins.map((u) => u.trim()).filter(Boolean),
-      instr,
-      model,
-    });
-    toast('ok', 'Tutor salvo', 'As alterações já valem no widget embutido.');
-    navigate('/admin');
+    try {
+      await saveTutor({
+        id: editingId ?? undefined,
+        name: title.trim(),
+        desc: desc.trim(),
+        active,
+        sourceUrls: sourceUrls.map((u) => u.trim()).filter(Boolean),
+        origins: origins.map((u) => u.trim()).filter(Boolean),
+        instr,
+        model,
+        fallbackEnabled,
+      });
+      toast('ok', 'Tutor salvo', 'As alterações já valem no widget embutido.');
+      navigate('/admin');
+    } catch (e) {
+      toast('err', 'Falha ao salvar', e instanceof Error ? e.message : 'Tente novamente.');
+    }
   };
 
   const suggestModel = () => {
     let pick: ModelId;
     let why: string;
-    if (editingId === 99) {
+    if (tutor?.fallback) {
       pick = 'strong';
       why = 'o Reitor lida com conversas abertas e cheias de nuance, então o modelo mais capaz (Llama 3.3 70B) responde melhor.';
     } else if (instr.length > 500 || sourceUrls.length > 6) {
@@ -194,6 +200,39 @@ export function TutorDetail() {
               >
                 <span className="knob" />
               </button>
+            </div>
+          </div>
+          {/* Escalada ao Reitor: toggle nos tutores tematicos; o Reitor so exibe o selo. */}
+          <div className="card-block">
+            <div className="status-row">
+              {tutor?.fallback ? (
+                <>
+                  <div className="txt">
+                    <b>Tutor de fallback (Reitor)</b>
+                    <small>Recebe as perguntas escaladas pelos demais tutores. Não escala para ninguém.</small>
+                  </div>
+                  <span className="role">Fallback</span>
+                </>
+              ) : (
+                <>
+                  <div className="txt">
+                    <b>Encaminhar ao Reitor quando não souber</b>
+                    <small>
+                      {fallbackEnabled
+                        ? 'Perguntas fora do escopo são escaladas ao Reitor.'
+                        : 'O tutor responde honestamente que não sabe, sem escalar.'}
+                    </small>
+                  </div>
+                  <button
+                    className={`switch${fallbackEnabled ? ' on' : ''}`}
+                    role="switch"
+                    aria-checked={fallbackEnabled}
+                    onClick={() => setFallbackEnabled((v) => !v)}
+                  >
+                    <span className="knob" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <div className="form-actions">
@@ -472,13 +511,14 @@ function EmbedPane({
 }) {
   const { toast } = useMagister();
   const name = title.trim() || (tutor ? tutor.name : 'Novo tutor');
-  const slug = tutor?.slug || 'novo-tutor';
   const token = tutor?.token || 'tkn_novo';
   const icon = tutor?.icon || 'bot';
   const greet = tutor?.greet || `Olá! Sou o ${name}. Como posso ajudar?`;
 
+  // Snippet real: aponta para o widget deste app (/embed) com o embed token do tutor.
+  const embedUrl = `${window.location.origin}/embed?token=${token}`;
   const plainSnippet = `<!-- Magister · ${name} -->
-<iframe src="https://embed.magister.ai/t/${slug}"
+<iframe src="${embedUrl}"
         width="400" height="560" loading="lazy"
         title="${name}"
         style="border:0;border-radius:16px"></iframe>`;
@@ -548,7 +588,7 @@ function EmbedPane({
             <pre className="code">
               <span className="cm">{`<!-- Magister · ${name} -->`}</span>
               {'\n'}
-              <span className="tg">{'<iframe'}</span> <span className="at">src</span>=<span className="st">{`"https://embed.magister.ai/t/${slug}"`}</span>
+              <span className="tg">{'<iframe'}</span> <span className="at">src</span>=<span className="st">{`"${embedUrl}"`}</span>
               {'\n        '}
               <span className="at">width</span>=<span className="st">"400"</span> <span className="at">height</span>=<span className="st">"560"</span> <span className="at">loading</span>=<span className="st">"lazy"</span>
               {'\n        '}
@@ -607,7 +647,8 @@ function LivePreview({ token, name, icon, greet }: { token: string; name: string
           </div>
         </div>
         <div className="mw-body" ref={bodyRef}>
-          <div className="bubble bot" dangerouslySetInnerHTML={{ __html: greet }} />
+          {/* Saudacao renderizada como texto (nunca HTML). */}
+          <div className="bubble bot">{greet}</div>
           {messages.map((m) => (
             <div key={m.id} className={`bubble ${m.role === 'user' ? 'me' : 'bot'}`}>
               {/* Resposta do backend renderizada como texto (nunca HTML). */}

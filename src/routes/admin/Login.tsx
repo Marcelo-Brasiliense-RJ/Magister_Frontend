@@ -4,11 +4,11 @@ import { Icon } from './Icon';
 import { MagisterLogo } from './Logo';
 import { useMagister } from './store';
 
-// Tela de login. Auth mockada: a senha de demo e "senha123" (ver store).
+// Tela de login. Auth real via JWT (POST /api/auth/login). Credencial de demo no README.
 export function Login() {
   const { isAuthed, login, theme } = useMagister();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@dot.digital');
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('senha123');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export function Login() {
     setError(false);
     setLoading(true);
     try {
-      await login(password);
+      await login(username, password);
       navigate('/admin', { replace: true });
     } catch {
       setError(true);
@@ -43,14 +43,15 @@ export function Login() {
             </div>
           )}
           <div className="field">
-            <label htmlFor="lgEmail">E-mail</label>
+            <label htmlFor="lgUser">Usuário</label>
             <input
               className="ctl"
-              id="lgEmail"
-              type="email"
-              placeholder="voce@empresa.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="lgUser"
+              type="text"
+              autoComplete="username"
+              placeholder="admin"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="field">
@@ -74,7 +75,7 @@ export function Login() {
             )}
           </button>
         </form>
-        <div className="login-foot">Demo, a senha é “senha123”. Erre a senha p/ ver o estado de erro.</div>
+        <div className="login-foot">Login real via JWT. Credencial de demonstração no README do backend.</div>
       </div>
     </div>
   );

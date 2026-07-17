@@ -37,12 +37,43 @@ Apenas variaveis `VITE_*` (publicas) chegam ao bundle. **Nenhum segredo no front
 
 ## Fluxo de embed ponta a ponta
 
-1. Admin faz login em `/admin` (JWT em `Authorization: Bearer`) e cria um tutor.
-2. Em **Embed**, copia o snippet `<iframe src=".../embed?token=<embed_token>">`.
+1. Admin faz login em `/admin` (JWT em `Authorization: Bearer`) e cria/edita um tutor. Na
+   configuracao ha o toggle **Encaminhar ao Reitor quando nao souber** (`fallback_enabled`);
+   o tutor de fallback (Reitor) aparece marcado, sem toggle proprio.
+2. Em **Embed**, copia o snippet `<iframe src="${window.location.origin}/embed?token=<embed_token>">`,
+   gerado com o `embed_token` real do tutor.
 3. O site do integrador cola o snippet. O `<iframe>` carrega `/embed?token=...`.
-4. O widget resolve a config publica do tutor pelo token e conversa via `POST /api/chat` (SSE).
-5. O **embed token e publico e escopado** ao tutor; instrucoes, fontes e limites vivem no
+4. O widget resolve a config publica do tutor pelo token, **resume a conversa-modelo** semeada
+   (`GET /api/embed/{token}/session`) e conversa via `POST /api/chat` (SSE), reusando o
+   `session_id` recebido para manter o contexto real.
+5. Quando a pergunta foge do escopo e o `fallback_enabled` esta ligado, o backend escala ao
+   **Reitor**; o widget so exibe a resposta final como texto.
+6. O **embed token e publico e escopado** ao tutor; instrucoes, fontes e limites vivem no
    servidor. Nada sensivel trafega pelo host pai.
+
+## Arquitetura
+
+Diagrama canonico do sistema (backend + frontend + orquestracao multi-agente):
+[`../docs/architecture.mmd`](../docs/architecture.mmd). Recorte do frontend:
+
+```mermaid
+flowchart LR
+  subgraph FE["Frontend — React + Vite"]
+    Admin["/admin (login JWT + CRUD + snippet)"]
+    Widget["/embed?token= (widget de chat)"]
+  end
+  subgraph BE["Backend — FastAPI"]
+    Auth["POST /api/auth/login"]
+    Tutors["/api/tutors (JWT)"]
+    Embed["GET /api/embed/{token}\nGET /api/embed/{token}/session"]
+    Chat["POST /api/chat (SSE)"]
+  end
+  Admin -->|Bearer JWT| Auth
+  Admin -->|Bearer JWT| Tutors
+  Widget -->|publico| Embed
+  Widget -->|embed_token + session_id| Chat
+  Integrador["Site do integrador"] -.iframe.-> Widget
+```
 
 ## Estrutura
 
@@ -52,7 +83,8 @@ src/
 ├── routes/
 │   ├── admin/                  # painel Magister: MagisterApp, Shell, Login, TutorList,
 │   │                           # TutorDetail (abas + preview ao vivo), Analytics, Docs,
-│   │                           # Settings, store (contexto), data (mock) e modais
+│   │                           # Settings, store (contexto + API real), data (mapeamento
+│   │                           # API->UI + dados de exemplo do Analitico/Docs) e modais
 │   └── embed/Widget.tsx        # alvo do iframe (so o chat)
 ├── components/
 │   ├── chat/                   # ChatWindow, MessageList, Composer
@@ -64,10 +96,15 @@ src/
 
 ## Contrato da API (esperado do backend)
 
-- `POST /api/auth/login` → `{ access_token }`
-- `GET/POST /api/tutors`, `GET/PUT /api/tutors/{id}`, `PATCH /api/tutors/{id}/status`
+- `POST /api/auth/login` `{ username, password }` → `{ access_token }`
+- `GET/POST /api/tutors`, `GET/PUT /api/tutors/{id}`, `PATCH /api/tutors/{id}/status`.
+  O `TutorRead` inclui `is_fallback` (so leitura, marca o Reitor) e `fallback_enabled`
+  (editavel por `PUT`: se o tutor tematico escala ao Reitor quando nao sabe).
 - `GET /api/tutors/{id}/embed` → `{ embed_token, snippet }`
 - `GET /api/embed/{embed_token}` → `{ title, greeting }` (config publica do widget)
+- `POST /api/embed/{embed_token}/session` → `{ session_id, messages[] }` (resume publico: o
+  servidor minta um `session_id` por visitante e clona o template; `session_id` nulo quando o
+  tutor nao tem conversa-modelo).
 - `POST /api/chat` `{ embed_token, session_id?, message }` → **SSE**, eventos:
   `{"type":"session","session_id"}`, `{"type":"token","content"}`, `{"type":"done"}`,
   `{"type":"error","code","message"}`.
@@ -112,3 +149,21 @@ toasts, dialog de confirmacao com foco gerenciado e fechamento por `Esc`.
   (`rate_limited`, `limit_reached`).
 - Sem testes automatizados nesta camada (o ponto critico coberto por testes e o backend); a
   verificacao aqui e `lint` + `build`.
+- **Analitico e Documentacao sao conteudo de exemplo** (o backend nao expoe metricas). As
+  metricas por tutor exibidas na lista/analitico sao dados de demonstracao dos tutores semeados;
+  tutores criados pela UI aparecem sem metricas.
+- A **conversa-modelo** e uma sessao de demonstracao compartilhada por embed token; em producao
+  cada visitante teria a propria sessao (o backend clonaria o template).
+
+## Proximos passos
+
+- **Streaming token a token real:** o transporte SSE ja esta pronto; hoje o backend fatia a
+  resposta pronta. Ligar o streaming direto do modelo e mudanca localizada.
+- **Refresh token / expiracao de sessao:** hoje o JWT expira e a UI pede novo login; um refresh
+  silencioso melhoraria a experiencia.
+- **Analitico real:** trocar os dados de exemplo por metricas de uso agregadas pelo backend
+  (conversas, resolucao, custo por tutor).
+- **Gestao de multiplos admins e papeis** (fora do escopo do MVP, um unico admin hoje).
+- **Persistir o modelo de IA por tutor:** o seletor da aba Modelo e presentacional (o backend
+  roteia por custo); expor o campo no contrato o tornaria efetivo.
+- **Testes de frontend** (widget e guarda de rota) com Vitest + Testing Library.

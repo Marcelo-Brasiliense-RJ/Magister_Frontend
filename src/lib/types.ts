@@ -3,13 +3,15 @@
 export type TutorStatus = 'active' | 'inactive';
 
 export interface Tutor {
-  id: string;
+  id: number;
   title: string;
   description: string;
   status: TutorStatus;
   system_instructions: string;
   sources: string[];
   allowed_origins: string[];
+  is_fallback: boolean; // marca o Reitor (definido no seed, so leitura)
+  fallback_enabled: boolean; // se o tutor escala ao Reitor quando nao sabe
   embed_token: string;
   created_at: string;
   updated_at: string;
@@ -22,6 +24,7 @@ export interface TutorInput {
   system_instructions: string;
   sources: string[];
   allowed_origins: string[];
+  fallback_enabled?: boolean;
 }
 
 export interface EmbedInfo {

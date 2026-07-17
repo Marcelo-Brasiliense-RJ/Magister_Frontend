@@ -45,7 +45,8 @@ export function Widget() {
   const cfg = config ?? FALLBACK;
   return (
     <div className="widget-shell">
-      <ChatWindow embedToken={token} title={cfg.title} greeting={cfg.greeting} />
+      {/* resume: carrega a conversa-modelo semeada e deixa o visitante continuar. */}
+      <ChatWindow embedToken={token} title={cfg.title} greeting={cfg.greeting} resume />
     </div>
   );
 }
