@@ -50,15 +50,16 @@ Apenas variaveis `VITE_*` (publicas) chegam ao bundle. **Nenhum segredo no front
 src/
 ├── main.tsx, App.tsx           # entry + rotas (admin | embed)
 ├── routes/
-│   ├── admin/                  # Login, TutorList, TutorForm, EmbedSnippet, AdminLayout (guarda)
+│   ├── admin/                  # painel Magister: MagisterApp, Shell, Login, TutorList,
+│   │                           # TutorDetail (abas + preview ao vivo), Analytics, Docs,
+│   │                           # Settings, store (contexto), data (mock) e modais
 │   └── embed/Widget.tsx        # alvo do iframe (so o chat)
 ├── components/
 │   ├── chat/                   # ChatWindow, MessageList, Composer
-│   └── ui/                     # primitivas do design system
+│   └── ui/                     # primitivas usadas pelo widget
 ├── lib/                        # api.ts (REST), sse.ts (stream), types.ts
-├── hooks/                      # useChat (sessao), useAuth (JWT)
-├── styles/                     # tokens.css (design system), global.css
-└── assets/logo.svg
+├── hooks/                      # useChat (sessao de chat)
+└── styles/                     # tokens.css + magister.tokens.css (design system), global.css
 ```
 
 ## Contrato da API (esperado do backend)
@@ -73,10 +74,11 @@ src/
 
 ## Design system
 
-`src/styles/tokens.css` define variaveis semanticas (tema **claro** principal em `:root`, tema
-**escuro** em `[data-theme="dark"]`) derivadas da marca DOT (carvao, marfim, accent teal). A
-saida oficial do **Claude Design** (`logo.svg` + `tokens.css`) substitui os placeholders sem
-refatorar componentes. O logo atual e um placeholder textual ("Magister").
+`src/styles/tokens.css` define as variaveis semanticas do widget (tema **claro** principal em
+`:root`, tema **escuro** em `[data-theme="dark"]`), derivadas da marca DOT (carvao, marfim,
+accent teal). O painel admin usa o design system do **Magister** gerado no **Claude Design**
+(`src/styles/magister.tokens.css` + `src/routes/admin/magister.css`), com os tokens escopados
+sob `.magister` para nao afetar o widget. O logo e um placeholder textual ("Magister").
 
 ## Seguranca (itens de frontend)
 
@@ -110,10 +112,3 @@ toasts, dialog de confirmacao com foco gerenciado e fechamento por `Esc`.
   (`rate_limited`, `limit_reached`).
 - Sem testes automatizados nesta camada (o ponto critico coberto por testes e o backend); a
   verificacao aqui e `lint` + `build`.
-
-## Proximos passos
-
-- Substituir os placeholders pela saida do Claude Design (logo + tokens).
-- Refresh token / expiracao de sessao com renovacao silenciosa.
-- Testes de componente (widget e formulario) e e2e do fluxo de embed.
-- Markdown seguro na resposta do LLM (via DOMPurify) se necessario.
