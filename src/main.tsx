@@ -5,6 +5,7 @@ import App from './App';
 import './styles/tokens.css';
 import './styles/global.css';
 import './components/ui/ui.css';
+import './styles/magister.tokens.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
