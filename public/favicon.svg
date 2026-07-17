@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#2E2E2E" />
-  <text x="16" y="22" text-anchor="middle" font-family="Sora, Poppins, sans-serif" font-size="18" font-weight="700" fill="#ffffff">M</text>
-  <circle cx="24" cy="9" r="3" fill="#16C0BE" />
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Magister">
+  <rect x="0" y="0" width="32" height="32" rx="8" fill="#20262B"></rect>
+  <text x="15.5" y="23" text-anchor="middle" font-size="20" font-weight="700" fill="#16C0BE" letter-spacing="-0.4" font-family="Poppins, sans-serif">M</text>
+  <circle cx="25" cy="8" r="2.2" fill="#16C0BE"></circle>
 </svg>

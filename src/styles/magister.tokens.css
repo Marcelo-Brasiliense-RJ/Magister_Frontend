@@ -1,0 +1,231 @@
+/* ============================================================
+   Magister Design System — tokens importados do Claude Design.
+   Escopados sob `.magister` para nao colidir com os tokens do
+   widget/chat (que usam --text-*, --sp-*, --fs-* proprios).
+   Tema: claro e a variacao [data-theme="dark"] no <html>.
+   Fonte de verdade dos tokens do painel admin.
+   ============================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+.magister {
+  /* ---- Primitivas: Teal (o "dot" da DOT / accent Magister) ---- */
+  --teal-50: #e6f7f6;
+  --teal-100: #d3f0ef;
+  --teal-200: #b6e8e7;
+  --teal-300: #7fd8d6;
+  --teal-400: #3fcac8;
+  --teal-500: #16c0be;
+  --teal-600: #10aaa8;
+  --teal-700: #0c8f8d;
+  --teal-800: #0a7574;
+  --teal-900: #063e3d;
+  --teal-ink: #062e2d;
+
+  /* ---- Primitivas: Ink (carvao neutro) ---- */
+  --ink-0: #ffffff;
+  --ink-25: #fafaf8;
+  --ink-50: #f2f4f4;
+  --ink-75: #ecefef;
+  --ink-100: #e4e7e7;
+  --ink-200: #d2d6d6;
+  --ink-300: #cdd2d2;
+  --ink-400: #9aa3a6;
+  --ink-500: #808a8d;
+  --ink-600: #4e5558;
+  --ink-700: #3a4042;
+  --ink-800: #2a2e30;
+  --ink-900: #1b1f21;
+
+  /* ---- Primitivas: status ---- */
+  --green-500: #12946a;
+  --green-600: #0e8659;
+  --green-50: #e6f5ee;
+  --green-200: #bfe6d5;
+  --amber-500: #b8770b;
+  --amber-400: #e0940f;
+  --amber-50: #fbf0d9;
+  --amber-200: #f0dca8;
+  --red-500: #c0272c;
+  --red-600: #ce2f35;
+  --red-700: #b8262b;
+  --red-50: #fbe9e9;
+  --red-200: #f3c7c8;
+  --blue-500: #2e6fb0;
+  --blue-50: #e7f0fa;
+  --blue-200: #c3dbf2;
+
+  /* ---- Semantico — claro (tema principal) ---- */
+  --color-bg: var(--ink-25);
+  --color-bg-canvas: #f5f7f7;
+  --color-surface: var(--ink-0);
+  --color-surface-alt: var(--ink-50);
+  --color-surface-sunken: var(--ink-75);
+  --color-overlay: rgba(20, 26, 28, 0.44);
+
+  --color-border: var(--ink-100);
+  --color-border-strong: var(--ink-300);
+
+  --color-text-strong: var(--ink-800);
+  --color-text: var(--ink-600);
+  --color-text-muted: var(--ink-500);
+  --color-text-subtle: var(--ink-400);
+  --color-text-inverse: var(--ink-0);
+
+  --color-accent: var(--teal-500);
+  --color-accent-hover: var(--teal-600);
+  --color-accent-active: var(--teal-700);
+  --color-accent-subtle: var(--teal-50);
+  --color-accent-subtle-hover: var(--teal-100);
+  --color-accent-border: var(--teal-200);
+  --color-accent-text: var(--teal-700);
+  --color-on-accent: var(--teal-ink);
+
+  --color-success: var(--green-500);
+  --color-success-solid: var(--green-600);
+  --color-success-subtle: var(--green-50);
+  --color-success-border: var(--green-200);
+  --color-on-success: #ffffff;
+
+  --color-warning: var(--amber-500);
+  --color-warning-solid: var(--amber-400);
+  --color-warning-subtle: var(--amber-50);
+  --color-warning-border: var(--amber-200);
+  --color-on-warning: #ffffff;
+
+  --color-danger: var(--red-500);
+  --color-danger-solid: var(--red-600);
+  --color-danger-hover: var(--red-700);
+  --color-danger-subtle: var(--red-50);
+  --color-danger-border: var(--red-200);
+  --color-on-danger: #ffffff;
+
+  --color-info: var(--blue-500);
+  --color-info-subtle: var(--blue-50);
+  --color-info-border: var(--blue-200);
+  --color-on-info: #ffffff;
+
+  --color-focus: var(--teal-500);
+  --focus-ring: 0 0 0 3px rgba(22, 192, 190, 0.35);
+  --focus-ring-danger: 0 0 0 3px rgba(206, 47, 53, 0.3);
+
+  /* ---- Tipografia ---- */
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-display: 40px;
+  --fs-h1: 32px;
+  --fs-h2: 26px;
+  --fs-h3: 20px;
+  --fs-h4: 17px;
+  --fs-body-lg: 16px;
+  --fs-body: 15px;
+  --fs-body-sm: 13px;
+  --fs-caption: 12px;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ---- Espacamento (base 4px) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* ---- Raios ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+  --radius-round: 50%;
+
+  /* ---- Sombras ---- */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 28, 0.05);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 28, 0.08), 0 1px 2px rgba(16, 24, 28, 0.04);
+  --shadow-md: 0 4px 12px rgba(16, 24, 28, 0.08), 0 2px 4px rgba(16, 24, 28, 0.04);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 28, 0.12), 0 4px 8px rgba(16, 24, 28, 0.05);
+  --shadow-accent: 0 6px 18px rgba(22, 192, 190, 0.28);
+
+  /* ---- Motion ---- */
+  --dur-fast: 120ms;
+  --dur: 160ms;
+  --dur-slow: 220ms;
+  --ease-standard: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --transition-colors: color var(--dur) var(--ease-standard),
+    background-color var(--dur) var(--ease-standard),
+    border-color var(--dur) var(--ease-standard),
+    box-shadow var(--dur) var(--ease-standard);
+
+  color-scheme: light;
+}
+
+/* ================ Semantico — escuro (variacao) ================ */
+[data-theme="dark"] .magister {
+  --color-bg: #0f1419;
+  --color-bg-canvas: #0b0f13;
+  --color-surface: #161c22;
+  --color-surface-alt: #1d242b;
+  --color-surface-sunken: #10161b;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+
+  --color-border: #29323a;
+  --color-border-strong: #3b454e;
+
+  --color-text-strong: #eef2f3;
+  --color-text: #bfc8cc;
+  --color-text-muted: #869199;
+  --color-text-subtle: #667079;
+  --color-text-inverse: #0f1419;
+
+  --color-accent: #19c6c4;
+  --color-accent-hover: #33d3d1;
+  --color-accent-active: #14aba9;
+  --color-accent-subtle: #0e2b2b;
+  --color-accent-subtle-hover: #123736;
+  --color-accent-border: #1c4b4a;
+  --color-accent-text: #45d6d4;
+  --color-on-accent: #06211f;
+
+  --color-success: #34c08a;
+  --color-success-solid: #0e8659;
+  --color-success-subtle: #10281f;
+  --color-success-border: #1e4636;
+  --color-on-success: #ffffff;
+
+  --color-warning: #e0a73a;
+  --color-warning-solid: #e0940f;
+  --color-warning-subtle: #2a2110;
+  --color-warning-border: #4a3a17;
+  --color-on-warning: #221703;
+
+  --color-danger: #f2686c;
+  --color-danger-solid: #e5484d;
+  --color-danger-hover: #f2686c;
+  --color-danger-subtle: #2a1416;
+  --color-danger-border: #4c2528;
+  --color-on-danger: #ffffff;
+
+  --color-info: #6fa8f0;
+  --color-info-subtle: #12202f;
+  --color-info-border: #23405e;
+  --color-on-info: #08121d;
+
+  --color-focus: #19c6c4;
+  --focus-ring: 0 0 0 3px rgba(25, 198, 196, 0.42);
+  --focus-ring-danger: 0 0 0 3px rgba(242, 104, 108, 0.34);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.55), 0 2px 4px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.62), 0 4px 10px rgba(0, 0, 0, 0.4);
+  --shadow-accent: 0 6px 20px rgba(25, 198, 196, 0.3);
+
+  color-scheme: dark;
+}
