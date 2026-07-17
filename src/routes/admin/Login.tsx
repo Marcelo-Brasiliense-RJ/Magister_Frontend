@@ -1,63 +1,81 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { Button, Input, Logo } from '@/components/ui';
-import './admin.css';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { Icon } from './Icon';
+import { MagisterLogo } from './Logo';
+import { useMagister } from './store';
 
+// Tela de login. Auth mockada: a senha de demo e "senha123" (ver store).
 export function Login() {
-  const { login } = useAuth();
+  const { isAuthed, login, theme } = useMagister();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('admin@dot.digital');
+  const [password, setPassword] = useState('senha123');
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  if (isAuthed) return <Navigate to="/admin" replace />;
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setError(false);
     setLoading(true);
     try {
-      await login(username, password);
+      await login(password);
       navigate('/admin', { replace: true });
     } catch {
-      // Mensagem generica: nao distinguir usuario inexistente de senha errada.
-      setError('Usuario ou senha invalidos.');
-    } finally {
+      setError(true);
       setLoading(false);
     }
   };
 
   return (
-    <div className="login">
-      <form className="card login__card" onSubmit={onSubmit}>
-        <div className="login__brand">
-          <Logo height={28} />
+    <div id="login">
+      <div className="login-card">
+        <div className="brand">
+          <MagisterLogo variant="full" tone={theme === 'dark' ? 'onDark' : 'onLight'} height={42} />
         </div>
-        <h1 style={{ textAlign: 'center', fontSize: 'var(--fs-h2)' }}>Painel administrativo</h1>
-        {error && (
-          <div className="login__error" role="alert">
-            {error}
+        <h1>Entrar no painel</h1>
+        <p className="sub">Gerencie seus tutores de IA embutíveis.</p>
+        <form className="login-form" onSubmit={onSubmit} autoComplete="off">
+          {error && (
+            <div className="cred-error show" role="alert">
+              <Icon name="circle-alert" /> Credenciais inválidas. Verifique e tente novamente.
+            </div>
+          )}
+          <div className="field">
+            <label htmlFor="lgEmail">E-mail</label>
+            <input
+              className="ctl"
+              id="lgEmail"
+              type="email"
+              placeholder="voce@empresa.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
-        )}
-        <Input
-          label="Usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="username"
-          required
-        />
-        <Input
-          label="Senha"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-          required
-        />
-        <Button type="submit" full loading={loading}>
-          Entrar
-        </Button>
-      </form>
+          <div className="field">
+            <label htmlFor="lgPass">Senha</label>
+            <input
+              className="ctl"
+              id="lgPass"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary lg" type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spin" /> Entrando…
+              </>
+            ) : (
+              'Entrar'
+            )}
+          </button>
+        </form>
+        <div className="login-foot">Demo, a senha é “senha123”. Erre a senha p/ ver o estado de erro.</div>
+      </div>
     </div>
   );
 }
