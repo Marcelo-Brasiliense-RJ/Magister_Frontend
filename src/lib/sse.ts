@@ -49,16 +49,18 @@ export async function streamChat({
   let buffer = '';
 
   try {
-    // Le em blocos e separa frames SSE por linha em branco (\n\n).
+    // Le em blocos e separa frames SSE pela linha em branco. sse-starlette usa CRLF,
+    // entao o limite pode vir como \r\n\r\n, \n\n ou \r\r (todos validos na spec).
+    const boundary = /\r\n\r\n|\n\n|\r\r/;
     for (;;) {
       const { value, done } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 
-      let sep: number;
-      while ((sep = buffer.indexOf('\n\n')) !== -1) {
-        const frame = buffer.slice(0, sep);
-        buffer = buffer.slice(sep + 2);
+      let m: RegExpExecArray | null;
+      while ((m = boundary.exec(buffer)) !== null) {
+        const frame = buffer.slice(0, m.index);
+        buffer = buffer.slice(m.index + m[0].length);
         const event = parseFrame(frame);
         if (event) onEvent(event);
       }
@@ -74,9 +76,9 @@ export async function streamChat({
 // Extrai o payload `data:` de um frame SSE e decodifica o JSON do evento.
 function parseFrame(frame: string): ChatStreamEvent | null {
   const dataLines = frame
-    .split('\n')
+    .split(/\r?\n/)
     .filter((line) => line.startsWith('data:'))
-    .map((line) => line.slice(5).trimStart());
+    .map((line) => line.slice(5).trim());
   if (dataLines.length === 0) return null;
 
   const raw = dataLines.join('\n');
