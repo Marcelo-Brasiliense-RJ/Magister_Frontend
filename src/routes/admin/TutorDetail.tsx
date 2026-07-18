@@ -510,13 +510,20 @@ function EmbedPane({
   setCopied: (v: boolean) => void;
 }) {
   const { toast } = useMagister();
+  const [revealed, setRevealed] = useState(false);
   const name = title.trim() || (tutor ? tutor.name : 'Novo tutor');
   const token = tutor?.token || 'tkn_novo';
   const icon = tutor?.icon || 'bot';
   const greet = tutor?.greet || `Olá! Sou o ${name}. Como posso ajudar?`;
 
+  // Oculta o miolo do token: mantem o prefixo e os 2 ultimos, o resto vira pontos.
+  // Evita exposicao "por cima do ombro"; a copia sempre usa o valor real.
+  const masked = token.length <= 8 ? '•'.repeat(token.length) : `${token.slice(0, 4)}${'•'.repeat(8)}${token.slice(-2)}`;
+  const shownToken = revealed ? token : masked;
+
   // Snippet real: aponta para o widget deste app (/embed) com o embed token do tutor.
   const embedUrl = `${window.location.origin}/embed?token=${token}`;
+  const shownEmbedUrl = revealed ? embedUrl : `${window.location.origin}/embed?token=${masked}`;
   const plainSnippet = `<!-- Magister · ${name} -->
 <iframe src="${embedUrl}"
         width="400" height="560" loading="lazy"
@@ -540,7 +547,7 @@ function EmbedPane({
     } catch {
       /* noop */
     }
-    toast('info', 'Token copiado', token);
+    toast('info', 'Token copiado', 'Colado na área de transferência.');
   };
 
   return (
@@ -567,7 +574,14 @@ function EmbedPane({
           <h3>Token de embed</h3>
           <p className="desc">Identifica este tutor. Mantenha em segredo relativo, as origens permitidas protegem o uso.</p>
           <div className="token-box">
-            <code>{token}</code>
+            <code>{shownToken}</code>
+            <button
+              className="icon-btn"
+              onClick={() => setRevealed((v) => !v)}
+              aria-label={revealed ? 'Ocultar token' : 'Revelar token'}
+            >
+              <Icon name={revealed ? 'eye-off' : 'eye'} />
+            </button>
             <button className="icon-btn" onClick={copyToken} aria-label="Copiar token">
               <Icon name="copy" />
             </button>
@@ -588,7 +602,7 @@ function EmbedPane({
             <pre className="code">
               <span className="cm">{`<!-- Magister · ${name} -->`}</span>
               {'\n'}
-              <span className="tg">{'<iframe'}</span> <span className="at">src</span>=<span className="st">{`"${embedUrl}"`}</span>
+              <span className="tg">{'<iframe'}</span> <span className="at">src</span>=<span className="st">{`"${shownEmbedUrl}"`}</span>
               {'\n        '}
               <span className="at">width</span>=<span className="st">"400"</span> <span className="at">height</span>=<span className="st">"560"</span> <span className="at">loading</span>=<span className="st">"lazy"</span>
               {'\n        '}
